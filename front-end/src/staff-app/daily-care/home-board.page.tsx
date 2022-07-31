@@ -22,7 +22,7 @@ export const HomeBoardPage: React.FC = () => {
   const [getStudents, data, loadState] = useApi<{ students: Person[] }>({
     url: "get-homeboard-students",
   })
-  const { roll, setStudentRoll } = useContext(RollContext)
+  const { roll, setStudentRoll, setDefaultRoll } = useContext(RollContext)
   const [sortType, setSortType] = useState<SortType | "">("")
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC)
 
@@ -51,6 +51,7 @@ export const HomeBoardPage: React.FC = () => {
     }
 
     if (action === "exit") {
+      setDefaultRoll()
       setIsRollMode(false)
       setFilterRoll(FilterRollType.ALL)
     }
@@ -64,6 +65,7 @@ export const HomeBoardPage: React.FC = () => {
         student_id: student.studentId,
         roll_state: student.type,
       }))
+      // cleanup here- use api-route. use loding, before new roll save
       const saveRollData = async () => {
         await saveActiveRoll({
           student_roll_states: rollData,
@@ -71,6 +73,7 @@ export const HomeBoardPage: React.FC = () => {
       }
 
       saveRollData()
+      setDefaultRoll()
     }
   }
 

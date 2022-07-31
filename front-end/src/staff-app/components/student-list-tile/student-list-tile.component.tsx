@@ -12,7 +12,7 @@ import RollStateDisplay from "staff-app/components/roll-state/roll-state-display
 interface Props {
   isRollMode?: boolean
   isRollDisplayMode?: boolean
-  rollDisplayType: RollStateType
+  rollDisplayType?: RollStateType
   student: Person
 }
 
@@ -35,7 +35,7 @@ export const StudentListTile: React.FC<Props> = ({ isRollMode, student, isRollDi
           <RollStateSwitcher initialState={rollType} onStateChange={handleRollSateChange} />
         </S.Roll>
       )}
-      {isRollDisplayMode && (
+      {isRollDisplayMode && rollDisplayType && (
         <S.Roll>
           <RollStateDisplay rollState={rollDisplayType} />
         </S.Roll>

@@ -1,33 +1,37 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
-import { BorderRadius, FontWeight, Spacing } from "shared/styles/styles"
+import { Spacing } from "shared/styles/styles"
 import { CenteredContainer } from "shared/components/centered-container/centered-container.component"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Colors } from "shared/styles/colors"
 import { useApi } from "shared/hooks/use-api"
 import StudentList from "./student-list"
 import ActivityList from "./activity-list"
 import { Person } from "shared/models/person"
-import { RollInput, RollStateType } from "shared/models/roll"
+import { RollInput } from "shared/models/roll"
 
-export const ActivityPage: React.FC = () => {
-  const [currentRollList, setCurrentRollList] = useState<any>({})
-
-  interface ActivityType {
-    type: string
-    date: string
-    entity: {
-      id: number
-      name: string
-      student_roll_states: RollInput
-    }
+interface ActivityType {
+  type: string
+  date: string
+  entity: {
+    id: number
+    name: string
+    student_roll_states: RollInput
   }
+}
+export const ActivityPage: React.FC = () => {
+  const [currentRoll, setCurrentRoll] = useState<ActivityType>({
+    type: "",
+    date: "",
+    entity: {} as any,
+  })
+
   const [getStudentData, studentData, StudentDataLoadState] = useApi<{ students: Person[] }>({
     url: "get-homeboard-students",
   })
 
   const [getActivitiesData, activitiesData, ActivitiesDataLoadState] = useApi<{
     activity: ActivityType[]
+    success: boolean
   }>({
     url: "get-activities",
   })
@@ -38,11 +42,11 @@ export const ActivityPage: React.FC = () => {
   }, [getStudentData, getActivitiesData])
 
   const handleShowData = (id: number) => {
-    const currentRoll = activitiesData?.activity.filter((item) => item.entity.id === id)
-    // console.log("currentRoll", currentRoll[0])
+    const currentRollList = activitiesData?.activity.filter((item) => item.entity.id === id)
+    console.log("currentRoll", currentRoll)
 
-    if (currentRoll) {
-      setCurrentRollList(currentRoll[0].entity.student_roll_states)
+    if (currentRollList) {
+      setCurrentRoll(currentRollList[0])
     }
   }
 
@@ -67,13 +71,13 @@ export const ActivityPage: React.FC = () => {
         <S.AttendenceContainer>
           <S.ActivityContainer>{activitiesData?.activity.length > 0 && <ActivityList activitiesData={activitiesData} handleShowData={handleShowData} />}</S.ActivityContainer>
           <S.StudentContainer>
-            {currentRollList.length > 0 ? (
+            {currentRoll.entity.id ? (
               <>
-                <h1>Attendence List</h1>
-                <StudentList rolls={currentRollList} students={studentData?.students as Person[]} />
+                <h1>Roll Details</h1>
+                <StudentList rolls={currentRoll.entity.student_roll_states as any} students={studentData?.students as Person[]} />
               </>
             ) : (
-              <p>No Attendence Data</p>
+              <p>No Roll Data</p>
             )}
           </S.StudentContainer>
         </S.AttendenceContainer>

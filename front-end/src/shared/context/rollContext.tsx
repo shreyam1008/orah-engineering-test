@@ -15,6 +15,7 @@ type RollContextType = {
   getRollType: (studentId: Number) => RollStateType
   setStudentRoll: (roll: Person[]) => void
   rollCount: RollCountType
+  setDefaultRoll: () => void
 }
 
 const defaultRoll: Roll[] = []
@@ -24,6 +25,7 @@ const defaultRollContext: RollContextType = {
   saveRoll: () => {},
   getRollType: () => "unmark",
   setStudentRoll: () => {},
+  setDefaultRoll: () => {},
   rollCount: {
     present: 0,
     absent: 0,
@@ -42,6 +44,10 @@ export const RollProvider: React.FC<React.ReactNode> = ({ children }) => {
     absent: roll.filter((r) => r.type === "absent").length,
     late: roll.filter((r) => r.type === "late").length,
     total: roll.filter((r) => r.type === "present").length + roll.filter((r) => r.type === "absent").length + roll.filter((r) => r.type === "late").length,
+  }
+
+  const setDefaultRoll = () => {
+    setRoll(defaultRoll)
   }
 
   const saveRoll = (studentId: Number, rollType: RollStateType) => {
@@ -71,7 +77,7 @@ export const RollProvider: React.FC<React.ReactNode> = ({ children }) => {
     setRoll(studentRoll)
   }
 
-  return <RollContext.Provider value={{ roll, setStudentRoll, saveRoll, getRollType, rollCount }}>{children}</RollContext.Provider>
+  return <RollContext.Provider value={{ roll, setStudentRoll, saveRoll, getRollType, rollCount, setDefaultRoll }}>{children}</RollContext.Provider>
 }
 
 export default RollProvider

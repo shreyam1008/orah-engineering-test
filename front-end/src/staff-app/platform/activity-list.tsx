@@ -1,10 +1,22 @@
 import React from "react"
 import parseDateTime from "shared/helpers/date-parse"
+import { RollInput } from "shared/models/roll"
 import { Colors } from "shared/styles/colors"
 import styled from "styled-components"
 
 interface ActivityListProps {
-  activitiesData: any
+  activitiesData: {
+    success: boolean
+    activity: {
+      type: string
+      date: string
+      entity: {
+        id: number
+        name: string
+        student_roll_states: RollInput
+      }
+    }[]
+  }
   handleShowData: (id: number) => void
 }
 
@@ -13,20 +25,11 @@ const ActivityList: React.FC<ActivityListProps> = (props) => {
   return (
     <>
       {activitiesData.activity.map((roll: { date: string; entity: { name: string; id: number } }) => (
-        <div
-          key={roll.date}
-          style={{
-            backgroundColor: "white",
-            borderRadius: 10,
-            padding: 10,
-            margin: 10,
-            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
-          }}
-        >
+        <S.ActivityListContainer key={roll.date}>
           <p>Date: {parseDateTime(roll.date)}</p>
           <p>Roll Name: {roll.entity.name}</p>
           <S.Button onClick={() => handleShowData(roll.entity.id)}>Show Data</S.Button>
-        </div>
+        </S.ActivityListContainer>
       ))}
     </>
   )
@@ -41,5 +44,12 @@ const S = {
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
+  `,
+  ActivityListContainer: styled.div`
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   `,
 }
