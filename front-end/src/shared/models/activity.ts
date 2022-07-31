@@ -1,7 +1,7 @@
-import { Roll } from "shared/models/roll"
+import { RollApi } from "shared/models/roll"
 
 export interface Activity {
   type: "roll"
   date: Date
-  entity: Roll
+  entity: RollApi
 }

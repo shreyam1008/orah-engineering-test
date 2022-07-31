@@ -14,6 +14,7 @@ import StudentsList from "./students-list"
 import { SortTypeToTextMap, SortOrderToTextMap } from "staff-app/constants/toolbar"
 import { RollContext } from "shared/context/rollContext"
 import FilterRollType from "shared/enums/filter-type"
+import { saveActiveRoll } from "api/save-active-roll"
 
 export const HomeBoardPage: React.FC = () => {
   const [isRollMode, setIsRollMode] = useState(false)
@@ -21,7 +22,7 @@ export const HomeBoardPage: React.FC = () => {
   const [getStudents, data, loadState] = useApi<{ students: Person[] }>({
     url: "get-homeboard-students",
   })
-  const { setStudentRoll } = useContext(RollContext)
+  const { roll, setStudentRoll } = useContext(RollContext)
   const [sortType, setSortType] = useState<SortType | "">("")
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC)
 
@@ -52,6 +53,24 @@ export const HomeBoardPage: React.FC = () => {
     if (action === "exit") {
       setIsRollMode(false)
       setFilterRoll(FilterRollType.ALL)
+    }
+
+    if (action === "complete") {
+      setIsRollMode(false)
+      setFilterRoll(FilterRollType.ALL)
+      setSearchTerm("")
+
+      const rollData = roll.map((student) => ({
+        student_id: student.studentId,
+        roll_state: student.type,
+      }))
+      const saveRollData = async () => {
+        await saveActiveRoll({
+          student_roll_states: rollData,
+        })
+      }
+
+      saveRollData()
     }
   }
 
@@ -97,7 +116,7 @@ export const HomeBoardPage: React.FC = () => {
   )
 }
 
-type ToolbarAction = "roll" | "sort" | "search"
+type ToolbarAction = "roll" | "sort" | "search" | "complete"
 
 interface ToolbarProps {
   setSortType: (sortType: SortType) => void

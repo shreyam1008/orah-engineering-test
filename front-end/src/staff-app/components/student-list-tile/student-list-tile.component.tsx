@@ -7,13 +7,16 @@ import { Person, PersonHelper } from "shared/models/person"
 import { RollStateSwitcher } from "staff-app/components/roll-state/roll-state-switcher.component"
 import { RollContext } from "shared/context/rollContext"
 import { RollStateType } from "shared/models/roll"
+import RollStateDisplay from "staff-app/components/roll-state/roll-state-display.component"
 
 interface Props {
   isRollMode?: boolean
+  isRollDisplayMode?: boolean
+  rollDisplayType: RollStateType
   student: Person
 }
 
-export const StudentListTile: React.FC<Props> = ({ isRollMode, student }) => {
+export const StudentListTile: React.FC<Props> = ({ isRollMode, student, isRollDisplayMode, rollDisplayType }) => {
   const { saveRoll, getRollType } = useContext(RollContext)
 
   const handleRollSateChange = (newState: RollStateType) => {
@@ -30,6 +33,11 @@ export const StudentListTile: React.FC<Props> = ({ isRollMode, student }) => {
       {isRollMode && (
         <S.Roll>
           <RollStateSwitcher initialState={rollType} onStateChange={handleRollSateChange} />
+        </S.Roll>
+      )}
+      {isRollDisplayMode && (
+        <S.Roll>
+          <RollStateDisplay rollState={rollDisplayType} />
         </S.Roll>
       )}
     </S.Container>
