@@ -2,6 +2,7 @@ import React from "react"
 import parseDateTime from "shared/helpers/date-parse"
 import { RollInput } from "shared/models/roll"
 import { Colors } from "shared/styles/colors"
+import filterByDate from "staff-app/helpers/activity"
 import styled from "styled-components"
 
 interface ActivityListProps {
@@ -18,19 +19,28 @@ interface ActivityListProps {
     }[]
   }
   handleShowData: (id: number) => void
+  dateFilter?: string
 }
 
 const ActivityList: React.FC<ActivityListProps> = (props) => {
-  const { handleShowData, activitiesData } = props
+  const { handleShowData, activitiesData, dateFilter } = props
+  const { activity } = activitiesData
+
+  const filteredActivitiesData = dateFilter ? filterByDate(activity, dateFilter) : activity
+
   return (
     <>
-      {activitiesData.activity.map((roll: { date: string; entity: { name: string; id: number } }) => (
-        <S.ActivityListContainer key={roll.date}>
-          <p>Date: {parseDateTime(roll.date)}</p>
-          <p>Roll Name: {roll.entity.name}</p>
-          <S.Button onClick={() => handleShowData(roll.entity.id)}>Show Data</S.Button>
-        </S.ActivityListContainer>
-      ))}
+      {filteredActivitiesData.length > 0 ? (
+        filteredActivitiesData.map((roll: { date: string; entity: { name: string; id: number } }) => (
+          <S.ActivityListContainer key={roll.date}>
+            <p>Date: {parseDateTime(roll.date)}</p>
+            <p>Roll Name: {roll.entity.name}</p>
+            <S.Button onClick={() => handleShowData(roll.entity.id)}>Show Data</S.Button>
+          </S.ActivityListContainer>
+        ))
+      ) : (
+        <p>No Roll Data on this date</p>
+      )}
     </>
   )
 }

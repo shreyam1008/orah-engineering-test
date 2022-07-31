@@ -19,11 +19,12 @@ interface ActivityType {
   }
 }
 export const ActivityPage: React.FC = () => {
-  const [currentRoll, setCurrentRoll] = useState<ActivityType>({
+  const defaultCurrentRoll = {
     type: "",
     date: "",
     entity: {} as any,
-  })
+  }
+  const [currentRoll, setCurrentRoll] = useState<ActivityType>(defaultCurrentRoll)
 
   const [getStudentData, studentData, StudentDataLoadState] = useApi<{ students: Person[] }>({
     url: "get-homeboard-students",
@@ -50,6 +51,7 @@ export const ActivityPage: React.FC = () => {
     }
   }
 
+  const [filterDate, setFilterDate] = useState<string>("")
   if (!activitiesData) {
     return (
       <S.Container>
@@ -67,9 +69,24 @@ export const ActivityPage: React.FC = () => {
           <FontAwesomeIcon icon="spinner" size="2x" spin />
         </CenteredContainer>
       )}
+      <S.DateFilterContainer>
+        Search By date:
+        <form>
+          <input
+            type="date"
+            value={filterDate}
+            onChange={(e) => {
+              setFilterDate(e.target.value)
+              setCurrentRoll(defaultCurrentRoll)
+            }}
+          />
+        </form>
+      </S.DateFilterContainer>
       {StudentDataLoadState === "loaded" && ActivitiesDataLoadState === "loaded" && (
         <S.AttendenceContainer>
-          <S.ActivityContainer>{activitiesData?.activity.length > 0 && <ActivityList activitiesData={activitiesData} handleShowData={handleShowData} />}</S.ActivityContainer>
+          <S.ActivityContainer>
+            {activitiesData?.activity.length > 0 && <ActivityList dateFilter={filterDate} activitiesData={activitiesData} handleShowData={handleShowData} />}
+          </S.ActivityContainer>
           <S.StudentContainer>
             {currentRoll.entity.id ? (
               <>
@@ -108,6 +125,11 @@ const S = {
   `,
   StudentContainer: styled.div`
     flex: 0.7;
+    margin-left: 20px;
+  `,
+  DateFilterContainer: styled.div`
+    display: flex;
+    flex-direction: column;
     margin-left: 20px;
   `,
 }

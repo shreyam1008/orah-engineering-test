@@ -65,7 +65,6 @@ export const HomeBoardPage: React.FC = () => {
         student_id: student.studentId,
         roll_state: student.type,
       }))
-      // cleanup here- use api-route. use loding, before new roll save
       const saveRollData = async () => {
         await saveActiveRoll({
           student_roll_states: rollData,
