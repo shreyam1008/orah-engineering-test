@@ -25,17 +25,34 @@ interface ActivityListProps {
 const ActivityList: React.FC<ActivityListProps> = (props) => {
   const { handleShowData, activitiesData, dateFilter } = props
   const { activity } = activitiesData
+  const [activeRoll, setActiveRoll] = React.useState<number>(0)
 
-  const filteredActivitiesData = dateFilter ? filterByDate(activity, dateFilter) : activity
+  const filteredActivitiesData = React.useMemo(() => (dateFilter ? filterByDate(activity, dateFilter) : activity), [activity, dateFilter])
+
+  const isActive = (type: number) => {
+    console.log("type", type)
+
+    if (type === activeRoll) {
+      return true
+    }
+    return false
+  }
 
   return (
     <>
       {filteredActivitiesData.length > 0 ? (
         filteredActivitiesData.map((roll: { date: string; entity: { name: string; id: number } }) => (
-          <S.ActivityListContainer key={roll.date}>
+          <S.ActivityListContainer key={roll.date} isActive={isActive(roll.entity.id)}>
             <p>Date: {parseDateTime(roll.date)}</p>
             <p>Roll Name: {roll.entity.name}</p>
-            <S.Button onClick={() => handleShowData(roll.entity.id)}>Show Data</S.Button>
+            <S.Button
+              onClick={() => {
+                setActiveRoll(roll.entity.id)
+                handleShowData(roll.entity.id)
+              }}
+            >
+              Show Data
+            </S.Button>
           </S.ActivityListContainer>
         ))
       ) : (
@@ -55,8 +72,10 @@ const S = {
     padding: 5px 10px;
     cursor: pointer;
   `,
-  ActivityListContainer: styled.div`
-    background-color: white;
+  ActivityListContainer: styled.div<{
+    isActive: boolean
+  }>`
+    background-color: ${(props) => (props.isActive ? "#fff" : "#f1f1f1")};
     border-radius: 10px;
     padding: 10px;
     margin: 10px;

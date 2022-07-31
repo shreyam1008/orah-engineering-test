@@ -44,7 +44,6 @@ export const ActivityPage: React.FC = () => {
 
   const handleShowData = (id: number) => {
     const currentRollList = activitiesData?.activity.filter((item) => item.entity.id === id)
-    console.log("currentRoll", currentRoll)
 
     if (currentRollList) {
       setCurrentRoll(currentRollList[0])
