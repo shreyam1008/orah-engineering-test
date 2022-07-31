@@ -30,8 +30,6 @@ const ActivityList: React.FC<ActivityListProps> = (props) => {
   const filteredActivitiesData = React.useMemo(() => (dateFilter ? filterByDate(activity, dateFilter) : activity), [activity, dateFilter])
 
   const isActive = (type: number) => {
-    console.log("type", type)
-
     if (type === activeRoll) {
       return true
     }

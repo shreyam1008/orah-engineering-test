@@ -33,15 +33,10 @@ export const HomeBoardPage: React.FC = () => {
     void getStudents()
   }, [getStudents])
 
-  useEffect(() => {
-    if (data) {
-      setStudentRoll(data.students)
-    }
-  }, [data])
-
   const onToolbarAction = (action: ToolbarAction) => {
     if (action === "roll") {
       setIsRollMode(true)
+      data && setStudentRoll(data.students)
     }
   }
 
